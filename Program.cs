@@ -1,64 +1,40 @@
 using System;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Azure.Devices.Client;
+using System.IO;
+using System.Reflection;
+using log4net;
+using log4net.Config;
+using log4net.Core;
 
-namespace IOT
+namespace Iot
 {
   class Program
   {
-    private readonly static string _connectionString = Environment.GetEnvironmentVariable("DEVICE_CONNECTION_STRING");
-    private static int interval = 2;
-    private static DeviceClient client;
+    private static Model.TelemetryType model;
+    private static Model.Configuration config;
 
-    private static Task<MethodResponse> SetInterval(MethodRequest methodRequest, object userContext)
-    {
-      var data = Encoding.UTF8.GetString(methodRequest.Data);
-      if (Int32.TryParse(data, out interval))
-      {
-        Log(ConsoleColor.Blue, String.Format("Telemetry interval set to {0} seconds", data));
-
-        string result = "{\"result\":\"Executed direct method: " + methodRequest.Name + "\"}";
-        return Task.FromResult(new MethodResponse(Encoding.UTF8.GetBytes(result), 200));
-      }
-      else
-      {
-        string result = "{\"result\":\"Invalid parameter\"}";
-        return Task.FromResult(new MethodResponse(Encoding.UTF8.GetBytes(result), 400));
-      }
-    }
-
-    private static async void SendTelemetry()
-    {
-      Random rand = new Random();
-
-      while (true)
-      {
-        var telemetry = new Model.Climate();
-        var message = new Message(Encoding.ASCII.GetBytes(telemetry.toJson()));
-        message.Properties.Add("TelemetryType", "Climate");
-
-        Log(ConsoleColor.Green, "Sending message: " + Encoding.ASCII.GetString(message.GetBytes()));
-        await client.SendEventAsync(message);
-        Log(ConsoleColor.DarkGray, "SendEvent: " + DateTime.UtcNow);
-
-        await Task.Delay(interval * 1000);
-      }
-    }
+    // We use log4net for our logger
+    private static readonly ILog Log = LogManager.GetLogger(typeof(Program));
 
     private static void Main(string[] args)
     {
-      client = DeviceClient.CreateFromConnectionString(_connectionString);
-      client.SetMethodHandlerAsync("SetInterval", SetInterval, null).Wait();
-      SendTelemetry();
-      while (true) { }
-    }
+      // Setup the logger
+      var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+      XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
+      Log.Info("Starting up");
 
-    public static void Log(ConsoleColor color, string message)
-    {
-      Console.ForegroundColor = color;
-      Console.WriteLine(message);
-      Console.ResetColor();
+      config = new Model.Configuration();
+
+      switch (Environment.GetEnvironmentVariable("MODEL"))
+      {
+        default:
+          model = Model.TelemetryType.CLIMATE;
+          break;
+      }
+
+      //TODO:  If Edge Host setup Certificate
+
+      var device = new Device(Log, config, model);
+      device.Start();
     }
   }
 }

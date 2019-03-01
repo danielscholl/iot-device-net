@@ -1,0 +1,28 @@
+2019-03-01 11:29:26,923 [1] INFO  App Starting up 
+2019-03-01 12:10:27,785 [1] INFO  App Starting up 
+2019-03-01 12:10:27,811 [1] INFO  App Authentication: SymmetricKey 
+2019-03-01 12:11:06,439 [1] INFO  App Starting up 
+2019-03-01 12:11:06,464 [1] INFO  App Authentication: SymmetricKey 
+2019-03-01 12:11:06,480 [1] INFO  App -----------------IOT DEVICE SYMMETRICKEY------------------ 
+2019-03-01 12:11:06,483 [1] INFO  App Connection String: HostName=hubb2tmft3hbcw7e.azure-devices.net;DeviceId=device;SharedAccessKey=mopwnh5dK2To2guaYBXMn+SOd4QN3PMIvqMIgaEZSUo= 
+2019-03-01 12:11:08,315 [1] INFO  App Sending message: {"DeviceId":"device","WindSpeed":10.580597944828028,"Humidity":63.039504384174712,"TimeStamp":1551463868} 
+2019-03-01 12:11:10,428 [5] INFO  App Sending message: {"DeviceId":"device","WindSpeed":13.591212065700075,"Humidity":61.584107280515184,"TimeStamp":1551463870} 
+2019-03-01 12:11:12,500 [5] INFO  App Sending message: {"DeviceId":"device","WindSpeed":13.481625959035766,"Humidity":69.014204521204434,"TimeStamp":1551463872} 
+2019-03-01 12:11:14,568 [5] INFO  App Sending message: {"DeviceId":"device","WindSpeed":10.379216632051028,"Humidity":76.344184193920427,"TimeStamp":1551463874} 
+2019-03-01 12:11:16,630 [6] INFO  App Sending message: {"DeviceId":"device","WindSpeed":12.858665771250923,"Humidity":75.7969639523872,"TimeStamp":1551463876} 
+2019-03-01 12:11:18,691 [5] INFO  App Sending message: {"DeviceId":"device","WindSpeed":12.214819421160417,"Humidity":65.751229257207,"TimeStamp":1551463878} 
+2019-03-01 12:11:20,750 [6] INFO  App Sending message: {"DeviceId":"device","WindSpeed":12.324197293410169,"Humidity":72.083284664937892,"TimeStamp":1551463880} 
+2019-03-01 12:11:22,827 [6] INFO  App Sending message: {"DeviceId":"device","WindSpeed":10.027853505698896,"Humidity":72.466571504467439,"TimeStamp":1551463882} 
+2019-03-01 12:11:24,891 [5] INFO  App Sending message: {"DeviceId":"device","WindSpeed":10.621952889776766,"Humidity":64.8058839630363,"TimeStamp":1551463884} 
+2019-03-01 12:11:26,952 [5] INFO  App Sending message: {"DeviceId":"device","WindSpeed":11.868009778609505,"Humidity":63.549250403209243,"TimeStamp":1551463886} 
+2019-03-01 12:11:29,021 [5] INFO  App Sending message: {"DeviceId":"device","WindSpeed":10.995902095453769,"Humidity":73.547627932181413,"TimeStamp":1551463889} 
+2019-03-01 12:29:22,666 [1] INFO  App Starting up 
+2019-03-01 12:29:22,696 [1] INFO  App Protocol: AMQP 
+2019-03-01 12:29:22,705 [1] INFO  App Authentication: SymmetricKey 
+2019-03-01 12:29:22,715 [1] INFO  App -----------------IOT DEVICE SYMMETRICKEY------------------ 
+2019-03-01 12:29:22,722 [1] INFO  App Connection String: HostName=hubb2tmft3hbcw7e.azure-devices.net;DeviceId=device;SharedAccessKey=mopwnh5dK2To2guaYBXMn+SOd4QN3PMIvqMIgaEZSUo= 
+2019-03-01 12:29:29,525 [1] INFO  App Sending message: {"DeviceId":"device","WindSpeed":13.347530360961114,"Humidity":67.10956908162197,"TimeStamp":1551464969} 
+2019-03-01 12:29:31,670 [8] INFO  App Sending message: {"DeviceId":"device","WindSpeed":12.358144481833161,"Humidity":65.654171977962449,"TimeStamp":1551464971} 
+2019-03-01 12:29:33,748 [8] INFO  App Sending message: {"DeviceId":"device","WindSpeed":10.295638898525219,"Humidity":63.615684278130388,"TimeStamp":1551464973} 
+2019-03-01 12:29:35,821 [8] INFO  App Sending message: {"DeviceId":"device","WindSpeed":10.610805698023553,"Humidity":78.686469196661591,"TimeStamp":1551464975} 
+2019-03-01 12:29:37,887 [8] INFO  App Sending message: {"DeviceId":"device","WindSpeed":11.015056042473324,"Humidity":63.087707293726368,"TimeStamp":1551464977} 
