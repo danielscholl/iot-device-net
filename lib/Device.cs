@@ -5,54 +5,134 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
+using Microsoft.ApplicationInsights;
 
 namespace Iot
 {
   public class Device
   {
-    private bool is509 = false;
     private bool isLeaf = false;
+    private bool is509 = false;
+    private bool insights = false;
 
-    private readonly ILog Log;
+    private readonly ILog log;
 
-    private Model.TelemetryType _telemetryType;
+    private Model.TelemetryType telemetryType;
     private DeviceClient deviceClient;
     private Model.Configuration config;
 
-    public Device(ILog log,
-    Model.Configuration configuration, Model.TelemetryType telemetryType)
+    private TelemetryClient telemetryClient;
+
+    public Device(ILog log, Model.Configuration config, Model.TelemetryType telemetryType)
     {
-      Log = log;
-      config = configuration;
-      _telemetryType = telemetryType;
+      this.log = log;
+      this.config = config;
+      this.telemetryType = telemetryType;
 
-      if (config.Protocol == TransportType.Amqp) Log.Info("Protocol: AMQP");
-      else Log.Info("Protocol: MQTT");
-
-      if (config.ConnectionString.Contains("509")) {
-        is509 = true;
-        log.Info("Authentication: x509");
+      // Setup App Insights
+      if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY")))
+      {
+        insights = true;
+        this.telemetryClient = new TelemetryClient();
+        this.telemetryClient.Context.Device.Id = Environment.GetEnvironmentVariable("DEVICE");
+        this.telemetryClient.TrackEvent("IoTDeviceSimulator started");
+        this.telemetryClient.GetMetric("SimulatorCount").TrackValue(1);
       }
+
+
+      // Setup the Device Protocol
+      switch (config.Protocol)
+      {
+        case TransportType.Mqtt:
+          log.Info("Protocol: MQTT");
+          break;
+        case TransportType.Amqp:
+          log.Info("Protocol: AMQP");
+          break;
+        default:
+          log.Info("Protocol: MQTT");
+          break;
+      }
+
+      // Determine if Symmetric Key or x509
+      if (!string.IsNullOrEmpty(config.ConnectionString) && config.ConnectionString.Contains("509"))
+        is509 = true;
+
+      if (is509) log.Info("Authentication: x509");
       else log.Info("Authentication: SymmetricKey");
 
-      if (config.ConnectionString != null && config.EdgeHost != null) {
+      // Determine if Down Stream Device
+      if (!string.IsNullOrEmpty(config.ConnectionString) && !string.IsNullOrEmpty(config.EdgeHost))
+      {
         config.ConnectionString = config.ConnectionString + ";GatewayHostName=" + config.EdgeHost;
-        log.Info("Gateway: " + config.EdgeHost);
         isLeaf = true;
+        log.Info("Gateway: " + config.EdgeHost);
       }
-
     }
 
-    private Task<MethodResponse> SetInterval(MethodRequest methodRequest, object userContext)
+    private void provisionDevice()
+    {
+      throw new NotImplementedException();
+    }
+
+    private void c2dMessage()
+    {
+      throw new NotImplementedException();
+    }
+
+    private void desiredProperties()
+    {
+      throw new NotImplementedException();
+    }
+
+    private async void sendMessage()
+    {
+      var sendCount = 1;
+
+      while (true)
+      {
+        var telemetry = new Model.Climate();
+        telemetry.Count = sendCount;
+        var message = new Message(Encoding.ASCII.GetBytes(telemetry.toJson()));
+        message.Properties.Add("TelemetryType", telemetryType.ToString());
+
+        try
+        {
+          log.Info("Sending message: " + Encoding.ASCII.GetString(message.GetBytes()));
+
+          await deviceClient.SendEventAsync(message).ConfigureAwait(false);
+          if (insights) telemetryClient.GetMetric("DeviceMsgSent").TrackValue(1);
+          sendCount++;
+
+          await Task.Delay(config.Interval * 1000).ConfigureAwait(false);
+        }
+        catch (System.Exception ex)
+        {
+          log.ErrorFormat("Error with deviceId {0} while sending a message: {1}", telemetry.DeviceId, ex.Message + "\n" + ex.StackTrace);
+
+          if (insights) telemetryClient.TrackTrace(String.Format("Error with deviceId {0} while sending a message: {1}", telemetry.DeviceId, ex.Message));
+          if (insights) telemetryClient.GetMetric("DeviceSendError").TrackValue(1);
+
+          if (ex.InnerException != null)
+            log.ErrorFormat("Inner exception for deviceId {0} when sending a message: {1}", telemetry.DeviceId, ex.InnerException);
+
+          await Task.Delay(3000).ConfigureAwait(false);
+        }
+
+      }
+    }
+
+    private Task<MethodResponse> receiveMessage(MethodRequest methodRequest, object userContext)
     {
       int interval = config.Interval;
       var data = Encoding.UTF8.GetString(methodRequest.Data);
       if (int.TryParse(data, out interval))
       {
         config.Interval = interval;
-        Log.Info($"Telemetry interval set to {data} seconds");
+        log.Info($"Telemetry interval set to {data} seconds");
 
         string result = "{\"result\":\"Executed direct method: " + methodRequest.Name + "\"}";
+        if (insights) telemetryClient.GetMetric("DeviceDirectMethod").TrackValue(1);
         return Task.FromResult(new MethodResponse(Encoding.UTF8.GetBytes(result), 200));
       }
       else
@@ -62,21 +142,7 @@ namespace Iot
       }
     }
 
-    private async void SendTelemetry()
-    {
-      Random rand = new Random();
 
-      while (true)
-      {
-        var telemetry = new Model.Climate();
-        var message = new Message(Encoding.ASCII.GetBytes(telemetry.toJson()));
-        message.Properties.Add("TelemetryType", _telemetryType.ToString());
-
-        Log.Info("Sending message: " + Encoding.ASCII.GetString(message.GetBytes()));
-        await deviceClient.SendEventAsync(message);
-        await Task.Delay(config.Interval * 1000);
-      }
-    }
 
     public void Start()
     {
@@ -85,19 +151,22 @@ namespace Iot
       if (isLeaf) deviceType = "LEAF DEVICE";
       if (is509) authType = "X509";
 
-      if (config.ConnectionString == null) {
-        Log.Debug("Provision Host: " + config.ProvisionHost);
-        Log.Debug("Id Scope: " + config.IdScope);
+      if (string.IsNullOrEmpty(config.ConnectionString))
+      {
+        log.Debug("Provision Host: " + config.ProvisionHost);
+        log.Debug("Id Scope: " + config.IdScope);
 
         // TODO: Initialize DPS SDK
-      } else {
-        Log.Info($"-----------------{deviceType} {authType}------------------");
-        Log.Info("Connection String: " + config.ConnectionString);
+      }
+      else
+      {
+        log.Info($"-----------------{deviceType} {authType}------------------");
+        log.Info("Connection String: " + config.ConnectionString);
       }
 
       deviceClient = DeviceClient.CreateFromConnectionString(config.ConnectionString, config.Protocol);
-      deviceClient.SetMethodHandlerAsync("SetInterval", SetInterval, null).Wait();
-      SendTelemetry();
+      deviceClient.SetMethodHandlerAsync("SetInterval", receiveMessage, null).Wait();
+      sendMessage();
       while (true) { }
     }
   }

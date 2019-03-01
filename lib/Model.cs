@@ -37,18 +37,17 @@ namespace Iot.Model
   }
   public class Climate
   {
-    public string DeviceId { get; set; }
+    public string DeviceId { get; set; } = Environment.GetEnvironmentVariable("DEVICE");
     public double WindSpeed { get; set; }
     public double Humidity { get; set; }
-    public long TimeStamp { get; set; }
+    public long TimeStamp { get; set; } = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+    public long Count { get; set; }
 
     public Climate()
     {
       Random rand = new Random();
-      DeviceId = Environment.GetEnvironmentVariable("DEVICE");
       WindSpeed = 10 + rand.NextDouble() * 4;
       Humidity = 60 + rand.NextDouble() * 20;
-      TimeStamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
     }
 
     public string toJson()
