@@ -13,7 +13,7 @@ namespace Iot.Model
   public class Configuration
   {
     public string ConnectionString { get; set; }
-    public int Interval { get; set; } = 2;
+    public int Interval { get; set; } = 1;
     public string EdgeHost { get; set; }
     public string ProvisionHost { get; set; }
     public string IdScope { get; set; }

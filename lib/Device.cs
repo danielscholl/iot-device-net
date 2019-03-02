@@ -116,7 +116,7 @@ namespace Iot
           if (ex.InnerException != null)
             log.ErrorFormat("Inner exception for deviceId {0} when sending a message: {1}", telemetry.DeviceId, ex.InnerException);
 
-          await Task.Delay(3000).ConfigureAwait(false);
+          await Task.Delay(config.Interval * 1000).ConfigureAwait(false);
         }
 
       }
