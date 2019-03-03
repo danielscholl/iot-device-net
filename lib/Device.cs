@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using log4net;
 using Microsoft.ApplicationInsights;
+using System.Security.Cryptography.X509Certificates;
+using System.Linq;
 
 namespace Iot
 {
@@ -72,6 +74,7 @@ namespace Iot
 
     private void provisionDevice()
     {
+
       throw new NotImplementedException();
     }
 
@@ -157,6 +160,7 @@ namespace Iot
         log.Debug("Id Scope: " + config.IdScope);
 
         // TODO: Initialize DPS SDK
+        log.Error("provision not implemented");
       }
       else
       {
@@ -164,10 +168,28 @@ namespace Iot
         log.Info("Connection String: " + config.ConnectionString);
       }
 
-      deviceClient = DeviceClient.CreateFromConnectionString(config.ConnectionString, config.Protocol);
-      deviceClient.SetMethodHandlerAsync("SetInterval", receiveMessage, null).Wait();
-      sendMessage();
-      while (true) { }
+      if(!String.IsNullOrEmpty(config.ConnectionString)) {
+        if (is509)
+        {
+          var dict = config.ConnectionString.Split(';')
+                      .Select(x => x.Split('='))
+                      .ToDictionary(x => x[0], x => x[1]);
+          var cert = new X509Certificate2(config.CertPath, "password");
+          var auth = new DeviceAuthenticationWithX509Certificate(dict["DeviceId"], cert);
+          deviceClient = DeviceClient.Create(dict["HostName"], auth, config.Protocol);
+        } else
+        {
+          deviceClient = DeviceClient.CreateFromConnectionString(config.ConnectionString, config.Protocol);
+        }
+
+        deviceClient.SetMethodHandlerAsync("SetInterval", receiveMessage, null).Wait();
+        sendMessage();
+        while (true) { }
+      } else
+      {
+        log.Error("Connection String: ");
+      }
+
     }
   }
 }
