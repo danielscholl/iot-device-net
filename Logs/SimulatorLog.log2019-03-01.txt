@@ -1,8 +1,0 @@
-2019-03-01 13:14:06,138 [1] INFO  App Starting up 
-2019-03-01 13:14:06,158 [1] INFO  App Protocol: AMQP 
-2019-03-01 13:14:06,158 [1] INFO  App Authentication: SymmetricKey 
-2019-03-01 13:14:06,159 [1] INFO  App -----------------IOT DEVICE SYMMETRICKEY------------------ 
-2019-03-01 13:14:06,160 [1] INFO  App Connection String: HostName=hubb2tmft3hbcw7e.azure-devices.net;DeviceId=device;SharedAccessKey=mopwnh5dK2To2guaYBXMn+SOd4QN3PMIvqMIgaEZSUo= 
-2019-03-01 13:14:07,641 [1] INFO  App Sending message: {"DeviceId":"device","WindSpeed":11.54400492531434,"Humidity":72.386829262779486,"TimeStamp":1551467647} 
-2019-03-01 13:14:09,831 [8] INFO  App Sending message: {"DeviceId":"device","WindSpeed":10.554619046186385,"Humidity":70.93143215911995,"TimeStamp":1551467649} 
-2019-03-01 13:14:11,901 [4] INFO  App Sending message: {"DeviceId":"device","WindSpeed":11.058109261588244,"Humidity":73.945032569554186,"TimeStamp":1551467651} 

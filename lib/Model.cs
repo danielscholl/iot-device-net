@@ -25,16 +25,15 @@ namespace Iot.Model
     public Configuration()
     {
       int _interval;
-      int.TryParse(Environment.GetEnvironmentVariable("IOT_MESSAGE_INTERVAL"), out _interval);
+      int.TryParse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL"), out _interval);
       if (_interval > 0) Interval = _interval;
 
+      if (Environment.GetEnvironmentVariable("PROTOCOL") == "MQTT") Protocol = TransportType.Mqtt;
 
-      if (Environment.GetEnvironmentVariable("IOT_PROTOCOL") == "MQTT") Protocol = TransportType.Mqtt;
-
-      EdgeHost = Environment.GetEnvironmentVariable("IOT_EDGE_GATEWAY");
-      ProvisionHost = Environment.GetEnvironmentVariable("IOT_DPS_HOST");
-      IdScope = Environment.GetEnvironmentVariable("IOT_ID_SCOPE");
-      RegistrationId = Environment.GetEnvironmentVariable("IOT_DEVICE");
+      EdgeHost = Environment.GetEnvironmentVariable("EDGE_GATEWAY");
+      ProvisionHost = Environment.GetEnvironmentVariable("DPS_HOST");
+      IdScope = Environment.GetEnvironmentVariable("ID_SCOPE");
+      RegistrationId = Environment.GetEnvironmentVariable("DEVICE");
       ConnectionString = Environment.GetEnvironmentVariable("DEVICE_CONNECTION_STRING");
     }
   }

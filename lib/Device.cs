@@ -74,7 +74,6 @@ namespace Iot
 
     private void provisionDevice()
     {
-
       throw new NotImplementedException();
     }
 
@@ -168,7 +167,8 @@ namespace Iot
         log.Info("Connection String: " + config.ConnectionString);
       }
 
-      if(!String.IsNullOrEmpty(config.ConnectionString)) {
+      if (!String.IsNullOrEmpty(config.ConnectionString))
+      {
         if (is509)
         {
           var dict = config.ConnectionString.Split(';')
@@ -177,7 +177,8 @@ namespace Iot
           var cert = new X509Certificate2(config.CertPath, "password");
           var auth = new DeviceAuthenticationWithX509Certificate(dict["DeviceId"], cert);
           deviceClient = DeviceClient.Create(dict["HostName"], auth, config.Protocol);
-        } else
+        }
+        else
         {
           deviceClient = DeviceClient.CreateFromConnectionString(config.ConnectionString, config.Protocol);
         }
@@ -185,7 +186,8 @@ namespace Iot
         deviceClient.SetMethodHandlerAsync("SetInterval", receiveMessage, null).Wait();
         sendMessage();
         while (true) { }
-      } else
+      }
+      else
       {
         log.Error("Connection String: ");
       }

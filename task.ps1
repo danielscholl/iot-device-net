@@ -26,14 +26,16 @@ if (Test-Path "$PSScriptRoot\scripts\functions.ps1") { . "$PSScriptRoot\scripts\
 # Display Project Environment Settings
 if ($run -eq "set") {
   [Environment]::SetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY", $Env:APPINSIGHTS_INSTRUMENTATIONKEY, "User")
-  [Environment]::SetEnvironmentVariable("IOT_PROTOCOL", $Env:IOT_PROTOCOL, "User")
-  [Environment]::SetEnvironmentVariable("IOT_DPS_HOST", $Env:IOT_DPS_HOST, "User")
-  [Environment]::SetEnvironmentVariable("IOT_ID_SCOPE", $Env:IOT_ID_SCOPE, "User")
-  [Environment]::SetEnvironmentVariable("IOT_DEVICE", $Env:IOT_DEVICE, "User")
+  [Environment]::SetEnvironmentVariable("PROTOCOL", $Env:PROTOCOL, "User")
+  [Environment]::SetEnvironmentVariable("DPS_HOST", $Env:DPS_HOST, "User")
+  [Environment]::SetEnvironmentVariable("ID_SCOPE", $Env:ID_SCOPE, "User")
+  [Environment]::SetEnvironmentVariable("DEVICE", $Env:DEVICE, "User")
   Get-ChildItem Env:ARM_*
-  Get-ChildItem Env:AZURE_*
-  Get-ChildItem Env:IOT_*
-  Get-ChildItem Env:APPINSIGHTS*
+  Get-ChildItem Env:APPINSIGHTS_INSTRUMENTATIONKEY
+  Get-ChildItem Env:PROTOCOL
+  Get-ChildItem Env:DPS_HOST
+  Get-ChildItem Env:ID_SCOPE
+  Get-ChildItem Env:DEVICE
 }
 
 if ($run -eq "unset") {
@@ -43,37 +45,39 @@ if ($run -eq "unset") {
   [Environment]::SetEnvironmentVariable("IOT_ID_SCOPE", $null, "User")
   [Environment]::SetEnvironmentVariable("IOT_DEVICE", $null, "User")
   Get-ChildItem Env:ARM_*
-  Get-ChildItem Env:AZURE_*
-  Get-ChildItem Env:IOT_*
-  Get-ChildItem Env:APPINSIGHTS*
+  Get-ChildItem Env:APPINSIGHTS_INSTRUMENTATIONKEY
+  Get-ChildItem Env:PROTOCOL
+  Get-ChildItem Env:DPS_HOST
+  Get-ChildItem Env:ID_SCOPE
+  Get-ChildItem Env:DEVICE
 }
 
 if ($run -eq "device") {
   Write-Host "Creating Device...." -ForegroundColor "cyan"
-  az iot hub device-identity create -d $Env:IOT_DEVICE -n $Env:AZURE_HUB -ojsonc
+  az iot hub device-identity create -d $Env:DEVICE -n $Env:HUB -ojsonc
 }
 
 if ($run -eq "clean") {
   Write-Host "Cleaning up devices and certificates...." -ForegroundColor "cyan"
-  az iot hub device-identity delete -d $Env:IOT_DEVICE -n $Env:AZURE_HUB -ojsonc
+  az iot hub device-identity delete -d $Env:DEVICE -n $Env:HUB -ojsonc
   Remove-Item ./cert/*.pem
 }
 
 if ($run -eq "device:x509") {
   Write-Host "Creating Device...." -ForegroundColor "cyan"
-  az iot hub device-identity create -d $Env:IOT_DEVICE -n $Env:AZURE_HUB  --am x509_thumbprint --output-dir cert -ojsonc
-  openssl pkcs12 -export -in cert/$Env:IOT_DEVICE-cert.pem -inkey cert/$Env:IOT_DEVICE-key.pem -out cert/$Env:IOT_DEVICE.pfx -password pass:password
+  az iot hub device-identity create -d $Env:DEVICE -n $Env:HUB  --am x509_thumbprint --output-dir cert -ojsonc
+  openssl pkcs12 -export -in cert/$Env:DEVICE-cert.pem -inkey cert/$Env:DEVICE-key.pem -out cert/$Env:DEVICE.pfx -password pass:password
   Remove-Item cert/*.pem
 }
 
 if ($run -eq "monitor") {
   Write-Host "Monitor Device...." -ForegroundColor "cyan"
-  az iot hub monitor-events --hub-name $Env:AZURE_HUB --device-id $Env:IOT_DEVICE
+  az iot hub monitor-events --hub-name $Env:HUB --device-id $Env:DEVICE
 }
 
 if ($run -eq "none") {
   Write-Host "Starting Device...." -ForegroundColor "cyan"
-  $Env:DEVICE_CONNECTION_STRING = (az iot hub device-identity show-connection-string --hub-name $Env:AZURE_HUB  --device-id $Env:IOT_DEVICE -otsv)
+  $Env:DEVICE_CONNECTION_STRING = (az iot hub device-identity show-connection-string --hub-name $Env:HUB  --device-id $Env:DEVICE -otsv)
   dotnet build
   dotnet run
 }

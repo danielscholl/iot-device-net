@@ -5,6 +5,8 @@
 .env.ps1
 cert/*.pem
 
+Properties/launchSettings.json
+
 # User-specific files
 *.suo
 *.user

@@ -2,11 +2,7 @@
   "profiles": {
     "IotDevice": {
       "commandName": "Project",
-      "environmentVariables": {
-        "IOT_PROTOCOL": "MQTT",
-        "DEVICE_CONNECTION_STRING": "HostName=hubb2tmft3hbcw7e.azure-devices.net;DeviceId=device;x509=true",
-        "IOT_DEVICE": "device"
-      }
+      "environmentVariables": {}
     }
   }
 }
