@@ -1,0 +1,18 @@
+version: '3'
+services:
+  device:
+    build:
+      context: .
+      dockerfile: Dockerfile-provision
+    image: $REGISTRY_SERVER/iot-device-net:provision
+    volumes:
+      - ./cert:/usr/src/app/cert
+    deploy:
+      replicas: 5
+    environment:
+      TERM: xterm
+      ARM_SUBSCRIPTION_ID: $ARM_SUBSCRIPTION_ID
+      ARM_CLIENT_ID: $ARM_CLIENT_ID
+      ARM_CLIENT_SECRET: $ARM_CLIENT_SECRET
+      ARM_TENANT_ID: $ARM_TENANT_ID
+      HUB: $HUB
