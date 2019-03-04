@@ -11,8 +11,10 @@ pool:
 
 variables:
 - group: azuresecrets
-  imageName: 'iot-device-net:$(build.buildId)'
-  provisionImage: 'iot-device-net-provision:$(build.buildId)'
+- name: imageName
+  value: 'iot-device-net:$(build.buildId)'
+- name: provisionImage
+  value: 'iot-device-net-provision:$(build.buildId)'
 
 steps:
 - script: docker build -f Dockerfile -t $(imageName) .
