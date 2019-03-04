@@ -10,7 +10,11 @@
     "prestart": "dotnet build",
     "start": "DEVICE_CONNECTION_STRING=$(az iot hub device-identity show-connection-string --hub-name $HUB --device-id $DEVICE -otsv) dotnet run",
     "monitor": "az iot hub monitor-events --hub-name $HUB --device-id $DEVICE",
-    "clean": "rm -f ./cert/*.pem && rm -f ./cert/*.pfx && az iot hub device-identity delete -d $DEVICE -n $HUB -oyaml"
+    "clean": "rm -f ./cert/*.pem && rm -f ./cert/*.pfx && az iot hub device-identity delete -d $DEVICE -n $HUB -oyaml",
+    "docker:build": "docker build -t $REGISTRY_SERVER/iot-device-net:latest .",
+    "docker:start": "docker run -it --name $DEVICE --mount source=$(pwd)/cert,target=/usr/src/app/cert,type=bind -e PROTOCOL=$PROTOCOL -e APPINSIGHTS_INSTRUMENTATIONKEY=$APPINSIGHTS_INSTRUMENTATIONKEY -e DEVICE_CONNECTION_STRING=$(az iot hub device-identity show-connection-string --hub-name $HUB --device-id $DEVICE -otsv) $REGISTRY_SERVER/iot-device-net:latest",
+    "docker:stop": "docker rm -f $DEVICE",
+    "docker": "npm run docker:build && npm run docker:start"
   },
   "author": "",
   "license": "MIT"

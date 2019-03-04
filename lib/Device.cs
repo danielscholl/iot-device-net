@@ -183,7 +183,7 @@ namespace Iot
           deviceClient = DeviceClient.CreateFromConnectionString(config.ConnectionString, config.Protocol);
         }
 
-        deviceClient.SetMethodHandlerAsync("SetInterval", receiveMessage, null).Wait();
+        //deviceClient.SetMethodHandlerAsync("SetInterval", receiveMessage, null).Wait();
         sendMessage();
         while (true) { }
       }
