@@ -10,9 +10,9 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 variables:
+- group: azuresecrets
   imageName: 'iot-device-net:$(build.buildId)'
   provisionImage: 'iot-device-net-provision:$(build.buildId)'
-- group: azuresecrets
 
 steps:
 - script: docker build -f Dockerfile -t $(imageName) .
