@@ -2,6 +2,8 @@
 
 The purpose of this solution is to be able to easily deploy and run IoT Devices to test different features.
 
+[![Build Status](https://dascholl.visualstudio.com/IoT/_apis/build/status/danielscholl.iot-device-net?branchName=master)](https://dascholl.visualstudio.com/IoT/_build/latest?definitionId=23&branchName=master)
+
 __PreRequisites__
 
 Requires the use of [direnv](https://direnv.net/).  
