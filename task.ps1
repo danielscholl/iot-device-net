@@ -92,6 +92,7 @@ if ($run -eq "device:leaf") {
   Remove-Item cert/*.pem
   ./cert/cert.ps1
   az iot hub device-identity create -d $DEVICE -n $HUB -ojsonc
+  Remove-Item cert/device.pfx
 }
 
 
