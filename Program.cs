@@ -37,9 +37,10 @@ namespace Iot
         var store = new X509Store(StoreName.Root, StoreLocation.CurrentUser);
         try
         {
+          // The following line will work on Windows and on Linux but not on Mac OSX due to permissions of KeyChain
           store.Open(OpenFlags.ReadWrite);
           store.Add(new X509Certificate2(X509Certificate.CreateFromCertFile(root_ca)));
-          // store.Add(new X509Certificate2(root_ca, "password", X509KeyStorageFlags.Exportable));
+          // store.Add(new X509Certificate2(root_ca, "password", X509KeyStorageFlags.Exportable));  // This would be the way to add on Mac
         }
         finally
         {
