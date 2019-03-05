@@ -24,9 +24,8 @@ Requires the use of [Docker](https://www.docker.com/get-started).
 Environment Settings act differently depending upon the Operating System and the IDE that is being used.
 
 
-The best method to work with environment settings here is for command line to put environment settings in a .envrc file.  The `package.json` file is being used only as a convenient task runner but this helps just to execute the different actions and flip back and forth between different use cases of functionality.  For Windows Powershell the task.ps1 can be used as a manually created task runner for now.
-
-The task runner is responsible to obtain the connection_string needed and pass it in at runtime.
+_MacOSX_
+The best method to work with environment settings here is for command line to put environment settings in a .envrc file.  The `package.json` is being used as a convenient task runner.
 
 .envrc file format
 ```bash
@@ -39,18 +38,47 @@ export PROTOCOL="MQTT"
 export EDGE_GATEWAY="<dns_hostname>"
 ```
 
-If using VSCode and the desire is to step into the debugger then the .env file is a best practice to use.  The .envrc file can not be used because the format includes export.  The vscode `launch.json` file includes the ability to point to the .env file where environment variables will be loaded from.
+_Windows_
+The best method to work with environment settings here for command line is to put environment settings in a .env.ps1 file.  The `task.ps1` script is being used as a convenient task runner.
+
+.env.ps1 file format
+```bash
+# These are for Task Runner
+$Env:GROUP = "<resource_group>"
+$Env:HUB = "<hub_name>"
+$Env:REGISTRY_SERVER = "<docker_registry>"
+
+# These are for Device
+$Env:DEVICE="<device_name>"
+$Env:APPINSIGHTS_INSTRUMENTATIONKEY = "<metrics_key"
+$Env:PROTOCOL="<protocol>"
+
+# These are for DPS Provisioning
+$Env:DPS_HOST="global.azure-devices-provisioning.net"
+$Env:ID_SCOPE="<id_scope>"
+$Env:EDGE_GATEWAY="<edge_gateway>"
+```
+
+_VSCode_
+The best method to work with environment settings here for command line is to put environment settings in a .env file and reference it with the vscode `launch.json` file.
 
 The device connection string must be put in the .env file as the task runner is not sending the connection string at runtime..
 
 .env file format
 ```bash
-DEVICE_CONNECTION_STRING="<device_connection_string>"
-
+# These are for Device
 DEVICE="<device_name>"
-APPINSIGHTS_INSTRUMENTATIONKEY="<metrics_key>"
-PROTOCOL="MQTT"
-EDGE_GATEWAY="<dns_hostname>"
+APPINSIGHTS_INSTRUMENTATIONKEY = "<metrics_key>"
+PROTOCOL="<protocol>"
+
+# These are for DPS Provisioning
+DPS_HOST="global.azure-devices-provisioning.net"
+ID_SCOPE="<id_scope>"
+EDGE_GATEWAY="<edge_gateway>"
+
+
+## THIS MUST BE SET TO FEED IN THE CONNECTION STRING
+DEVICE_CONNECTION_STRING="HostName=hubb2tmft3hbcw7e.azure-devices.net;DeviceId=device;x509=true"
 ```
 
 
