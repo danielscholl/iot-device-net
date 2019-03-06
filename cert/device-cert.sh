@@ -40,8 +40,6 @@ tput setaf 3; echo "------------------------------------" ; tput sgr0
 
 # Download Root CA Certificate
 az keyvault certificate download --name ${ORGANIZATION}-root-ca --vault-name $VAULT --file cert/root-ca.pem --encoding PEM
-# openssl pkcs12 -export -nokeys -in cert/root-ca.pem -out cert/root.pfx -password pass:password
-# rm cert/root-ca.pem
 
 # Download and extract PEM files for Device
 az keyvault secret download --name $DEVICE --vault-name $VAULT --file cert/$DEVICE.pem --encoding base64

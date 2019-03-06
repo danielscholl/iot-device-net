@@ -138,15 +138,13 @@ export DEVICE="device"
 export HUB=$(az iot hub list --resource-group $GROUP --query [].name -otsv)
 export HUB_CONNECTION_STRING=$(az iot hub show-connection-string --hub-name $HUB)
 
-# Install
-npm install
 
 # Option A:  Self register a Device with either Symmetric Key or a self signed x509 Certificate
 npm run device            # Create Device with Symetric Key
 npm run device:x509       # Create Device With x509
 
 # Run the Device
-DEVICE_CONNECTION_STRING=$(az iot hub device-identity show-connection-string --hub-name $HUB --device-id $DEVICE -otsv) npm start
+npm start
 
 # Monitor the Device in a seperate terminal session
 npm run monitor
