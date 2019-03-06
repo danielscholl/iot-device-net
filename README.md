@@ -110,18 +110,17 @@ If using Visual Studio then the environment variables are pulled out of the `Pro
 Windows Powershell
 ```powershell
 # Setup the Environment Variables in .env.ps1
+#----------------------------------
 $Env:GROUP = "iot-resources"
 $Env:DEVICE="device"
 $Env:HUB = (az iot hub list --resource-group $GROUP --query [].name -otsv)
-$Env:HUB_CONNECTION_STRING = (az iot hub show-connection-string --hub-name $HUB)
-
+#----------------------------------
 
 # Option A:  Self register a Device with either Symmetric Key or a self signed x509 Certificate
 ./task.ps1 -run device        # Create Device with Symetric Key
 ./task.ps1 -run device:x509   # Create Device With x509
 
 # Run the Device
-$Env:DEVICE_CONNECTION_STRING= (az iot hub device-identity show-connection-string --hub-name $HUB --device-id $DEVICE -otsv)
 ./task.ps1
 
 # Monitor the Device in a seperate terminal session
@@ -131,12 +130,12 @@ $Env:DEVICE_CONNECTION_STRING= (az iot hub device-identity show-connection-strin
 ./task.ps1 -run clean
 ```
 
+Linux bash
 ```bash
 # Setup the Environment Variables
 export GROUP="iot-resources"
 export DEVICE="device"
 export HUB=$(az iot hub list --resource-group $GROUP --query [].name -otsv)
-export HUB_CONNECTION_STRING=$(az iot hub show-connection-string --hub-name $HUB)
 
 
 # Option A:  Self register a Device with either Symmetric Key or a self signed x509 Certificate
@@ -150,5 +149,57 @@ npm start
 npm run monitor
 
 # Remove the Device
+npm run clean
+```
+
+
+## Docker Device Simulation
+
+Windows Powershell
+```powershell
+# Setup the Environment Variables in .env.ps1
+#----------------------------------
+$Env:GROUP = "iot-resources"
+$Env:DEVICE="device"
+$Env:HUB = (az iot hub list --resource-group $GROUP --query [].name -otsv)
+$Env:REGISTRY_SERVER="localhost:5000"
+#----------------------------------
+
+# Option A:  Self register a Device with either Symmetric Key or a self signed x509 Certificate
+./task.ps1 -run device        # Create Device with Symetric Key
+./task.ps1 -run device:x509   # Create Device With x509
+
+# Run the Docker Device
+./task.ps1 -run docker
+
+# Monitor the Device in a seperate terminal session
+./task.ps1 -run monitor
+
+# Stop and Remove the Device
+./task.ps1 -run docker:stop
+./task.ps1 -run clean
+
+```
+
+Linux bash
+```bash
+# Setup the Environment Variables
+export GROUP="iot-resources"
+export DEVICE="device"
+export HUB=$(az iot hub list --resource-group $GROUP --query [].name -otsv)
+export REGISTRY_SERVER="localhost:5000"
+
+# Create a Device with "either" x509 or Symetric Key
+npm run device            # Create Device with Symetric Key
+npm run device:x509       # Create Device With x509
+
+# Retrieve the Connection String
+npm run docker
+
+# Monitor the Device in a seperate terminal session
+npm run monitor
+
+# Stop and Remove the Device
+npm run docker:stop
 npm run clean
 ```

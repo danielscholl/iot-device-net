@@ -95,6 +95,17 @@ if ($run -eq "device:leaf") {
   Remove-Item cert/device.pfx
 }
 
+if ($run -eq "docker") {
+  Write-Host "Starting up Docker...." -ForegroundColor "cyan"
+  docker build -t $REGISTRY_SERVER/iot-device-net:latest .
+  docker run -it --name $DEVICE --mount source=$PSScriptRoot/cert,target=/usr/src/app/cert,type=bind -e PROTOCOL=$PROTOCOL -e EDGE_GATEWAY=$EDGE_GATEWAY -e APPINSIGHTS_INSTRUMENTATIONKEY=$APPINSIGHTS_INSTRUMENTATIONKEY -e DEVICE_CONNECTION_STRING=$(az iot hub device-identity show-connection-string --hub-name $HUB --device-id $DEVICE -otsv) $REGISTRY_SERVER/iot-device-net:latest
+}
+
+if ($run -eq "docker:stop") {
+  Write-Host "Shutting down Docker...." -ForegroundColor "cyan"
+  docker rm -f $DEVICE
+}
+
 
 if ($run -eq "monitor") {
   Write-Host "Monitor Device...." -ForegroundColor "cyan"
