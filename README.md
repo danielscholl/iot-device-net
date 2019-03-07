@@ -193,7 +193,7 @@ export REGISTRY_SERVER="localhost:5000"
 npm run device            # Create Device with Symetric Key
 npm run device:x509       # Create Device With x509
 
-# Retrieve the Connection String
+# Run the Docker Device
 npm run docker
 
 # Monitor the Device in a seperate terminal session
@@ -201,5 +201,65 @@ npm run monitor
 
 # Stop and Remove the Device
 npm run docker:stop
+npm run clean
+```
+
+
+## Self Provision Simulation
+
+Windows Powershell
+```powershell
+# Setup the Environment Variables in .env.ps1
+#----------------------------------
+$Env:ARM_TENANT_ID = "<tenant_id>"
+$Env:ARM_SUBSCRIPTION_ID = "<tenant_subscription>"
+$Env:ARM_CLIENT_ID = "<principal_id>"
+$Env:ARM_CLIENT_SECRET = "<principal_secret>"
+$Env:REGISTRY_SERVER="localhost:5000"
+
+$Env:GROUP = "iot-resources"
+$Env:DEVICE="device"
+$Env:HUB = (az iot hub list --resource-group $GROUP --query [].name -otsv)
+$Env:EDGE_GATEWAY="<edge_gateway>"   # (Optional)
+#----------------------------------
+
+# Source in the environment variables
+./task.ps1 -run env
+
+# Pull out of KeyVault the Root CA Certificate
+./task.ps1 -run cert  # (Optional)
+
+# Run the Device
+docker-compose up
+
+# Stop and Remove the Device
+docker-compose stop
+docker-compose rm
+./task.ps1 -run clean
+```
+
+Linux bash
+```bash
+# Setup the Environment Variables
+export ARM_TENANT_ID="<tenant_id>"
+export ARM_SUBSCRIPTION_ID="<subscription_id>"
+export ARM_CLIENT_ID="<principal_id>"
+export ARM_CLIENT_SECRET="<principal_secret>"
+export REGISTRY_SERVER="localhost:5000"
+
+export GROUP="iot-resources"
+export DEVICE="device"
+export HUB=$(az iot hub list --resource-group $GROUP --query [].name -otsv)
+export EDGE_GATEWAY="<edge_gateway>"   # (Optional)
+
+# Pull out of KeyVault the Root CA Certificate
+npm run cert  # (Optional)
+
+# Run the Device
+docker-compose up
+
+# Stop and Remove the Device
+docker-compose stop
+docker-compose rm
 npm run clean
 ```

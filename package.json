@@ -3,6 +3,7 @@
   "version": "2.0.1",
   "description": "A Simple IoT Device",
   "scripts": {
+    "cert": "./cert/device-cert.sh",
     "device:leaf": "./cert/device-cert.sh && npm run device",
     "device": "az iot hub device-identity create -d $DEVICE -n $HUB -oyaml",
     "postdevice:x509": "openssl pkcs12 -export -in cert/$DEVICE-cert.pem -inkey cert/$DEVICE-key.pem -out cert/$DEVICE.pfx -password pass:password && rm cert/*.pem",

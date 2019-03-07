@@ -26,7 +26,7 @@ function provisionDevice()
   az account set \
     --subscription $ARM_SUBSCRIPTION_ID
 
-  if [ -f './cert/root.pfx' ]; then
+  if [ -f './cert/root-ca.pem' ]; then
     tput setaf 2; echo "Provisioning IoT Edge Device: Symmetric Key" ; tput sgr0
     tput setaf 3; echo "-------------------------------------------" ; tput sgr0
     az iot hub device-identity create -d $(hostname) -n $HUB -oyaml

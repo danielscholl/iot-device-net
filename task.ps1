@@ -19,15 +19,10 @@ param(
   [string] $run = "start"
 )
 
-$Env:ARM_TENANT_ID = [string]::Empty
-$Env:ARM_SUBSCRIPTION_ID = [string]::Empty
-$Env:ARM_CLIENT_ID = [string]::Empty
-$Env:ARM_CLIENT_SECRET = [string]::Empty
 $Env:GROUP = [string]::Empty
 $Env:HUB = [string]::Empty
 $Env:REGISTRY_SERVER = [string]::Empty
 $Env:DEVICE = [string]::Empty
-$Env:APPINSIGHTS_INSTRUMENTATIONKEY = [string]::Empty
 $Env:PROTOCOL = [string]::Empty
 $Env:DPS_HOST = [string]::Empty
 $Env:ID_SCOPE = [string]::Empty
@@ -72,6 +67,7 @@ if ($run -eq "clean") {
   Write-Host "Cleaning up devices and certificates...." -ForegroundColor "cyan"
   az iot hub device-identity delete -d $DEVICE -n $HUB -ojsonc
   Remove-Item ./cert/*.pfx
+  Remove-Item ./cert/*.pem
   dotnet clean
 }
 
@@ -104,6 +100,12 @@ if ($run -eq "docker") {
 if ($run -eq "docker:stop") {
   Write-Host "Shutting down Docker...." -ForegroundColor "cyan"
   docker rm -f $DEVICE
+}
+
+
+if ($run -eq "cert") {
+  Write-Host "Pulling CA Certs...." -ForegroundColor "cyan"
+  ./cert/cert.ps1
 }
 
 
