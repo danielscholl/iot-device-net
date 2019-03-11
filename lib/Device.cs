@@ -81,7 +81,7 @@ namespace Iot
             throw new NotImplementedException();
         }
 
-        private async void sendTwin()
+        private async Task sendTwin()
         {
             TwinCollection reportedProperties = new TwinCollection();
             reportedProperties["version"] = version;
@@ -99,13 +99,13 @@ namespace Iot
             {
                 log.Info($"Reset Message Interval: {interval}");
                 config.Interval = 1;
-                sendTwin();
+                await sendTwin().ConfigureAwait(false);
             }
             else if (interval != config.Interval)
             {
                 log.Info($"Set Message Interval: {interval}");
                 config.Interval = interval;
-                sendTwin();
+                await sendTwin().ConfigureAwait(false);
             }
         }
 
@@ -129,7 +129,7 @@ namespace Iot
             }
         }
 
-        private async void getMessage()
+        private async Task getMessage()
         {
             log.Info("Message Watcher: Started");
             while (true)
@@ -158,7 +158,7 @@ namespace Iot
             }
         }
 
-        private async void sendMessage()
+        private async Task sendMessage()
         {
             var sendCount = 1;
 
@@ -195,7 +195,7 @@ namespace Iot
         }
 
 
-        public void Start()
+        public async Task Start()
         {
             var deviceType = "IOT DEVICE";
             var authType = "SYMMETRICKEY";
@@ -235,10 +235,9 @@ namespace Iot
                 deviceClient.SetDesiredPropertyUpdateCallbackAsync(onDesiredProperties, null).ConfigureAwait(false);
                 deviceClient.SetMethodHandlerAsync("SetInterval", onSetInterval, null).ConfigureAwait(false);
 
-                sendTwin();
-                sendMessage();
-                getMessage();
-                while (true) { }
+                await sendTwin().ConfigureAwait(false);
+                await sendMessage().ConfigureAwait(false);
+                await getMessage().ConfigureAwait(false);
             }
             else
             {

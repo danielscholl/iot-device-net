@@ -49,7 +49,7 @@ namespace Iot
       }
 
       var device = new Device(Log, config, Model.TelemetryType.CLIMATE);
-      device.Start();
+      device.Start().GetAwaiter().GetResult();
     }
   }
 }
