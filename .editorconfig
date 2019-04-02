@@ -16,5 +16,8 @@ trim_trailing_whitespace = false
 [*.sh]
 end_of_line = lf
 
+[*.envrc]
+end_of_line = lf
+
 [*.cs]
 indent_size = 4
