@@ -103,9 +103,11 @@ if ($run -eq "docker:stop") {
 }
 
 
-if ($run -eq "cert") {
+if ($run -eq "docker:provision") {
   Write-Host "Pulling CA Certs...." -ForegroundColor "cyan"
   ./cert/cert.ps1
+  Remove-Item cert/*.pfx
+  docker-compose up -d
 }
 
 

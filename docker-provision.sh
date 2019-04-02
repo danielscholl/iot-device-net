@@ -26,16 +26,16 @@ function provisionDevice()
   az account set \
     --subscription $ARM_SUBSCRIPTION_ID
 
-  if [ -f './cert/root-ca.pem' ]; then
-    tput setaf 2; echo "Provisioning IoT Edge Device: Symmetric Key" ; tput sgr0
-    tput setaf 3; echo "-------------------------------------------" ; tput sgr0
-    az iot hub device-identity create -d $(hostname) -n $HUB -oyaml
-  else
+  if [ -z "$EDGE_GATEWAY" ]; then
     tput setaf 2; echo "Provisioning IoT Edge Device: x509" ; tput sgr0
     tput setaf 3; echo "-------------------------------------------" ; tput sgr0
     mkdir -p cert
     az iot hub device-identity create -d $(hostname) -n $HUB --am x509_thumbprint --output-dir cert -oyaml
     openssl pkcs12 -export -in cert/$(hostname)-cert.pem -inkey cert/$(hostname)-key.pem -out cert/device.pfx -password pass:password && rm cert/*.pem
+  else
+    tput setaf 2; echo "Provisioning IoT Edge Device: Symmetric Key" ; tput sgr0
+    tput setaf 3; echo "-------------------------------------------" ; tput sgr0
+    az iot hub device-identity create -d $(hostname) -n $HUB -oyaml
   fi
 
   DEVICE_CONNECTION_STRING=$(az iot hub device-identity show-connection-string \
