@@ -12,8 +12,7 @@
   Version History
   v1.0   - Initial Release
 #>
-#Requires -Version 5.1
-#Requires -Module @{ModuleName='AzureRM.Resources'; ModuleVersion='5.0'}
+#Requires -Version 6.2.1
 
 param(
   [string] $run = "start"
@@ -94,7 +93,7 @@ if ($run -eq "device:leaf") {
 if ($run -eq "docker") {
   Write-Host "Starting up Docker...." -ForegroundColor "cyan"
   docker build -t $REGISTRY_SERVER/iot-device-net:latest .
-  docker run -it --name $DEVICE --mount source=$PSScriptRoot/cert,target=/usr/src/app/cert,type=bind -e PROTOCOL=$PROTOCOL -e EDGE_GATEWAY=$EDGE_GATEWAY -e APPINSIGHTS_INSTRUMENTATIONKEY=$APPINSIGHTS_INSTRUMENTATIONKEY -e DEVICE_CONNECTION_STRING=$(az iot hub device-identity show-connection-string --hub-name $HUB --device-id $DEVICE -otsv) $REGISTRY_SERVER/iot-device-net:latest
+  docker run -it --name $DEVICE --mount source=$PSScriptRoot/cert, target=/usr/src/app/cert, type=bind -e PROTOCOL=$PROTOCOL -e EDGE_GATEWAY=$EDGE_GATEWAY -e APPINSIGHTS_INSTRUMENTATIONKEY=$APPINSIGHTS_INSTRUMENTATIONKEY -e DEVICE_CONNECTION_STRING=$(az iot hub device-identity show-connection-string --hub-name $HUB --device-id $DEVICE -otsv) $REGISTRY_SERVER/iot-device-net:latest
 }
 
 if ($run -eq "docker:stop") {
